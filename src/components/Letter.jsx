@@ -23,7 +23,7 @@ const Letter = ({ letter, selectedLetter, type }) => {
 
   const classes =
     letter === selectedLetter ? "bg-red-400 text-white" : typeClasses(type);
-  console.log(letter, selectedLetter);
+
   return (
     <div
       ref={drag}

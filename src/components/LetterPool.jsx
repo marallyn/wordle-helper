@@ -1,9 +1,11 @@
 import { useDrop } from "react-dnd";
+
+import { ItemTypes } from "../constants/appConstants";
 import Letter from "./Letter";
 
 const LetterPool = ({ letters, onDropLetter, selectedLetter, title, type }) => {
   const [{ isOver }, drop] = useDrop(() => ({
-    accept: "letter",
+    accept: ItemTypes.LETTER,
     drop: (item) =>
       onDropLetter({ letter: item.letter, fromType: item.type, toType: type }),
     collect: (monitor) => ({ isOver: monitor.isOver() }),
@@ -13,7 +15,7 @@ const LetterPool = ({ letters, onDropLetter, selectedLetter, title, type }) => {
     <div
       ref={drop}
       className={`
-        border-2 border-dashed p-4 min-h-[150px] rounded-lg
+        border-2 border-dashed p-4 min-h-[150px] rounded-lg mb-2
         ${isOver ? "border-blue-400 bg-blue-50" : "border-gray-300 bg-gray-100"}
         flex flex-wrap items-start content-start
       `}
