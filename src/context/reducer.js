@@ -5,7 +5,7 @@ import words from "../data/words";
 export const initialState = {
   availableLetters: "abcdefghijklmnopqrstuvwxyz".split(""),
   correctLetters: ["", "", "", "", ""],
-  remainingWords: words,
+  remainingWords: words.sort(),
   selectedLetter: null,
   unusedLetters: [],
   wrongLetters: [[], [], [], [], []],
