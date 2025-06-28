@@ -12,12 +12,12 @@ export const initialState = {
   wrongLetterSet: new Set(),
 };
 
-const addToAvailable = ({ availableLetters }, { payload: { letter } }) => {
-  const newAvailableLetters = [...availableLetters, letter];
-  newAvailableLetters.sort();
+// const addToAvailable = ({ availableLetters }, { payload: { letter } }) => {
+//   const newAvailableLetters = [...availableLetters, letter];
+//   newAvailableLetters.sort();
 
-  return newAvailableLetters;
-};
+//   return newAvailableLetters;
+// };
 
 const addToCorrectPosition = (
   { correctLetters },
@@ -52,9 +52,9 @@ const removeFromAvailable = ({ availableLetters }, { payload: { letter } }) => {
   return availableLetters.filter((l) => l !== letter);
 };
 
-const removeFromUnused = ({ unusedLetters }, { payload: { letter } }) => {
-  unusedLetters.filter((l) => l !== letter);
-};
+// const removeFromUnused = ({ unusedLetters }, { payload: { letter } }) => {
+//   unusedLetters.filter((l) => l !== letter);
+// };
 
 const updateWords = ({
   correctLetters,
@@ -134,11 +134,12 @@ export const reducer = (state, action) => {
         action.payload.fromType === LetterPoolTypes.NOT_USED &&
         action.payload.toType === LetterPoolTypes.AVAILABLE
       ) {
-        return {
-          ...state,
-          availableLetters: addToAvailable(state, action),
-          unusedLetters: removeFromUnused(state, action),
-        };
+        return state;
+        // return {
+        //   ...state,
+        //   availableLetters: addToAvailable(state, action),
+        //   unusedLetters: removeFromUnused(state, action),
+        // };
       } else if (
         action.payload.fromType === LetterPoolTypes.AVAILABLE &&
         action.payload.toType === LetterPoolTypes.CORRECT_POSITION

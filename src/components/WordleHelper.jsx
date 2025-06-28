@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { LetterPoolTypes } from "../constants/appConstants";
 import { DispatchContext, StateContext } from "../context/contexts";
@@ -6,12 +6,14 @@ import { initialState } from "../context/reducer";
 import c from "../context/constants";
 
 import "./WordleHelper.css";
-import LetterPool from "./LetterPool";
 import CorrectPositionPool from "./CorrectPositionPool";
+import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
+import LetterPool from "./LetterPool";
 import WordList from "./WordList";
 import WrongPositionPool from "./WrongPositionPool";
 
 function WordleHelper() {
+  const [shorcutsModalOpen, setShorcutsModalOpen] = useState(false);
   const {
     availableLetters,
     correctLetters,
@@ -28,6 +30,10 @@ function WordleHelper() {
     },
     [dispatch]
   );
+
+  const handleShortcutModalClose = () => {
+    setShorcutsModalOpen(false);
+  };
 
   useEffect(() => {
     if (initialMount.current) {
@@ -46,13 +52,14 @@ function WordleHelper() {
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
       const wrongCommands = "!@#$%";
-      const commandKeys = `12345!@#$%ua`.split("");
-      const handledKeys = [...initialState.availableLetters, ...commandKeys];
+      const letterCommandKeys = `12345!@#$%ua`.split("");
+      const otherCommandKeys = ["?", "Shift", "Escape"];
+      const handledKeys = [
+        ...initialState.availableLetters,
+        ...letterCommandKeys,
+        ...otherCommandKeys,
+      ];
       const pressedKey = event.key;
-
-      if (pressedKey === "Shift") {
-        return;
-      }
 
       if (!handledKeys.includes(pressedKey)) {
         dispatch({ type: c.LETTER_SELECTED, payload: null });
@@ -60,16 +67,27 @@ function WordleHelper() {
         return;
       }
 
-      if (
-        !selectedLetter &&
-        initialState.availableLetters.includes(pressedKey)
-      ) {
+      if (!selectedLetter && availableLetters.includes(pressedKey)) {
         dispatch({ type: c.LETTER_SELECTED, payload: pressedKey });
 
         return;
       }
 
-      if (selectedLetter && commandKeys.includes(pressedKey)) {
+      if (otherCommandKeys.includes(pressedKey)) {
+        event.preventDefault();
+        switch (pressedKey) {
+          case "Shift":
+            break;
+          case "?":
+            setShorcutsModalOpen(true);
+            break;
+          case "Escape":
+            setShorcutsModalOpen(false);
+        }
+        return;
+      }
+
+      if (selectedLetter && letterCommandKeys.includes(pressedKey)) {
         switch (pressedKey) {
           case "u":
             handleLetterDropped({
@@ -125,7 +143,7 @@ function WordleHelper() {
 
   return (
     <>
-      <h1 className="text-purple-800">Wordle Solver</h1>
+      <h1 className="text-white-800 mb-1">Wordle Helper</h1>
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col justify-start">
           <CorrectPositionPool letters={correctLetters} />
@@ -149,6 +167,10 @@ function WordleHelper() {
           />
         </div>
       </div>
+      <KeyboardShortcutsModal
+        isOpen={shorcutsModalOpen}
+        onClose={handleShortcutModalClose}
+      />
     </>
   );
 }
