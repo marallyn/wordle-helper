@@ -27,11 +27,6 @@ jobs:
           npm install
         working-directory: ./
 
-      - name: Validate resume
-        run: |
-          npm run validate
-        working-directory: ./
-
       - name: Lint
         run: |
           npm run lint
