@@ -1,16 +1,16 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
+import CorrectPositionPool from "../components/CorrectPositionPool";
+import KeyboardShortcutsModal from "../components/KeyboardShortcutsModal";
+import LetterPool from "../components/LetterPool";
+import WordList from "../components/WordList";
+import WrongPositionPool from "../components/WrongPositionPool";
 import { LetterPoolTypes } from "../constants/appConstants";
+import c from "../context/constants";
 import { DispatchContext, StateContext } from "../context/contexts";
 import { initialState } from "../context/reducer";
-import c from "../context/constants";
 
 import "./WordleHelper.css";
-import CorrectPositionPool from "./CorrectPositionPool";
-import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
-import LetterPool from "./LetterPool";
-import WordList from "./WordList";
-import WrongPositionPool from "./WrongPositionPool";
 
 function WordleHelper() {
   const [shorcutsModalOpen, setShorcutsModalOpen] = useState(false);
@@ -25,7 +25,7 @@ function WordleHelper() {
   const initialMount = useRef(true);
 
   const handleLetterDropped = useCallback(
-    (letterEvent) => {
+    letterEvent => {
       dispatch({ type: c.LETTER_DROPPED, payload: letterEvent });
     },
     [dispatch]
@@ -50,7 +50,7 @@ function WordleHelper() {
   }, [dispatch]);
 
   useEffect(() => {
-    const handleGlobalKeyDown = (event) => {
+    const handleGlobalKeyDown = event => {
       const wrongCommands = "!@#$%";
       const letterCommandKeys = `12345!@#$%ua`.split("");
       const otherCommandKeys = ["?", "Shift", "Escape"];
@@ -157,7 +157,6 @@ function WordleHelper() {
           />
         </div>
         <div className="flex flex-col justify-start">
-          <WordList />
           <LetterPool
             letters={unusedLetters}
             onDropLetter={handleLetterDropped}
@@ -165,6 +164,7 @@ function WordleHelper() {
             title="Unused Letters"
             type={LetterPoolTypes.NOT_USED}
           />
+          <WordList />
         </div>
       </div>
       <KeyboardShortcutsModal
