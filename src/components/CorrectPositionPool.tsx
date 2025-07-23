@@ -1,8 +1,7 @@
-import { useContext } from "react";
 import CorrectPositionLetter from "./CorrectPositionPoolLetter";
-import { DispatchContext } from "../context/contexts";
 import { LetterDroppedPayload } from "../types/actions";
 import { LetterOrEmpty } from "../types/common";
+import useDispatch from "../hooks/useDispatch";
 
 interface CorrectPositionPoolProps {
   letters: LetterOrEmpty[];
@@ -11,7 +10,7 @@ interface CorrectPositionPoolProps {
 const CorrectPositionPool: React.FC<CorrectPositionPoolProps> = ({
   letters,
 }) => {
-  const { dispatch } = useContext(DispatchContext);
+  const dispatch = useDispatch();
   const handleLetterDropped = (letterEvent: LetterDroppedPayload) => {
     dispatch({ type: "LETTER_DROPPED", payload: letterEvent });
   };

@@ -1,16 +1,17 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import CorrectPositionPool from "../components/CorrectPositionPool";
 import KeyboardShortcutsModal from "../components/KeyboardShortcutsModal";
 import LetterPool from "../components/LetterPool";
 import WordList from "../components/WordList";
 import WrongPositionPool from "../components/WrongPositionPool";
-import { DispatchContext, StateContext } from "../context/contexts";
 import { initialState } from "../context/reducer";
 
 import "./WordleHelper.css";
-import { LetterDroppedPayload } from "../types/actions";
+import useAppState from "../hooks/useAppState";
+import useDispatch from "../hooks/useDispatch";
 import useWordUpdater from "../hooks/useWordUpdater";
+import { LetterDroppedPayload } from "../types/actions";
 
 export default function WordleHelper() {
   const [shorcutsModalOpen, setShorcutsModalOpen] = useState(false);
@@ -20,8 +21,8 @@ export default function WordleHelper() {
     selectedLetter,
     unusedLetters,
     wrongLetters,
-  } = useContext(StateContext);
-  const { dispatch } = useContext(DispatchContext);
+  } = useAppState();
+  const dispatch = useDispatch();
 
   useWordUpdater();
 

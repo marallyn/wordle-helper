@@ -1,15 +1,14 @@
-import React, { useContext } from "react";
-import WrongPositionLetter from "./WrongPositionLetter";
-import { DispatchContext } from "../context/contexts";
+import useDispatch from "../hooks/useDispatch";
 import { Letter } from "../types/common";
 import { LetterDroppedPayload } from "../types/actions";
+import WrongPositionLetter from "./WrongPositionLetter";
 
 interface WrongPositionPoolProps {
   letters: Letter[][];
 }
 
-const WrongPositionPool: React.FC<WrongPositionPoolProps> = ({ letters }) => {
-  const { dispatch } = useContext(DispatchContext);
+export default function WrongPositionPool({ letters }: WrongPositionPoolProps) {
+  const dispatch = useDispatch();
   const handleLetterDropped = (letterEvent: LetterDroppedPayload) => {
     dispatch({ type: "LETTER_DROPPED", payload: letterEvent });
   };
@@ -34,6 +33,4 @@ const WrongPositionPool: React.FC<WrongPositionPoolProps> = ({ letters }) => {
       </p>
     </div>
   );
-};
-
-export default WrongPositionPool;
+}
