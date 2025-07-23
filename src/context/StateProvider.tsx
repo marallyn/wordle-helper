@@ -1,13 +1,17 @@
-import { useReducer } from "react";
+import React, { useReducer } from "react";
 import { DispatchContext, StateContext } from "./contexts";
 import { initialState, reducer } from "./reducer";
 
-const StateProvider = ({ children }) => {
+type StateProviderProps = {
+  children: React.ReactNode;
+};
+
+const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <StateContext value={state}>
-      <DispatchContext value={dispatch}>{children}</DispatchContext>
+      <DispatchContext value={{ dispatch }}>{children}</DispatchContext>
     </StateContext>
   );
 };

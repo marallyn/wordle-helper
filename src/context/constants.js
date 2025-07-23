@@ -1,7 +1,0 @@
-export const constants = {
-  LETTER_DROPPED: "LETTER_DROPPED",
-  LETTER_SELECTED: "LETTER_SELECTED",
-  UPDATE_SUGGESTED_WORDS: "UPDATE_SUGGESTED_WORDS",
-};
-
-export default constants;

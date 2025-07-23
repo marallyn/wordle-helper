@@ -1,12 +1,17 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import WrongPositionLetter from "./WrongPositionLetter";
 import { DispatchContext } from "../context/contexts";
-import c from "../context/constants";
+import { Letter } from "../types/common";
+import { LetterDroppedPayload } from "../types/actions";
 
-const WrongPositionPool = ({ letters }) => {
-  const dispatch = useContext(DispatchContext);
-  const handleLetterDropped = (letterEvent) => {
-    dispatch({ type: c.LETTER_DROPPED, payload: letterEvent });
+interface WrongPositionPoolProps {
+  letters: Letter[][];
+}
+
+const WrongPositionPool: React.FC<WrongPositionPoolProps> = ({ letters }) => {
+  const { dispatch } = useContext(DispatchContext);
+  const handleLetterDropped = (letterEvent: LetterDroppedPayload) => {
+    dispatch({ type: "LETTER_DROPPED", payload: letterEvent });
   };
 
   return (
@@ -17,6 +22,7 @@ const WrongPositionPool = ({ letters }) => {
       <div className="flex justify-center space-x-2 p-2 bg-gray-200 rounded">
         {letters.map((letters, index) => (
           <WrongPositionLetter
+            key={index}
             index={index}
             letters={letters}
             onLetterDropped={handleLetterDropped}

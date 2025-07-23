@@ -1,24 +1,31 @@
 import { useDrag } from "react-dnd";
-import { ItemTypes, LetterPoolTypes } from "../constants/appConstants";
+import { Letter, LetterPoolTypes } from "../types/common";
+import { DnDTypes } from "../types/drag-n-drop";
 
-const typeClasses = (type) => {
+const typeClasses = (type: LetterPoolTypes) => {
   switch (type) {
-    case LetterPoolTypes.AVAILABLE:
+    case "available":
       return "bg-blue-500 hover:bg-blue-600 text-white";
-    case LetterPoolTypes.CORRECT_POSITION:
+    case "correct-position":
       return "bg-green-500 text-white";
-    case LetterPoolTypes.WRONG_PLACE:
+    case "wrong-place":
       return "bg-yellow-500 text-black";
-    case LetterPoolTypes.NOT_USED:
+    case "not-used":
       return "bg-gray-400 text-white";
   }
 };
 
-const Letter = ({ letter, selectedLetter, type }) => {
+interface LetterProps {
+  letter: Letter;
+  selectedLetter: Letter | null;
+  type: LetterPoolTypes;
+}
+
+const LetterBox = ({ letter, selectedLetter, type }: LetterProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.LETTER,
+    type: DnDTypes.LETTER,
     item: { letter, type },
-    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+    collect: monitor => ({ isDragging: monitor.isDragging() }),
   }));
 
   const classes =
@@ -40,4 +47,4 @@ const Letter = ({ letter, selectedLetter, type }) => {
   );
 };
 
-export default Letter;
+export default LetterBox;

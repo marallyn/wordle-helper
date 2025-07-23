@@ -1,9 +1,16 @@
-import { LetterPoolTypes } from "../constants/appConstants";
-import c from "./constants";
 import words from "../data/words";
+import { Action, LetterDroppedAction } from "../types/actions";
+import { AppState } from "../types/context";
+import { Letter, LetterOrEmpty, LetterOrEmptyArray } from "../types/common";
 
-export const initialState = {
-  availableLetters: "abcdefghijklmnopqrstuvwxyz".split(""),
+const availableLetters: Letter[] = "abcdefghijklmnopqrstuvwxyz"
+  .split("")
+  .map(char => {
+    return char as Letter;
+  });
+
+export const initialState: AppState = {
+  availableLetters,
   correctLetters: ["", "", "", "", ""],
   remainingWords: words.sort(),
   selectedLetter: null,
@@ -20,19 +27,27 @@ export const initialState = {
 // };
 
 const addToCorrectPosition = (
-  { correctLetters },
-  { payload: { index, letter } }
-) => {
-  const newCorrectLetters = [...correctLetters];
+  { correctLetters }: AppState,
+  { payload: { index, letter } }: LetterDroppedAction
+): LetterOrEmptyArray => {
+  if (typeof index !== "number") {
+    throw new Error("Letter dropped on correct position with no index?!?!?!");
+  }
+
+  const newCorrectLetters: LetterOrEmptyArray = [...correctLetters];
   newCorrectLetters[index] = letter;
 
   return newCorrectLetters;
 };
 
 const addToWrongPosition = (
-  { wrongLetters },
-  { payload: { index, letter } }
+  { wrongLetters }: AppState,
+  { payload: { index, letter } }: LetterDroppedAction
 ) => {
+  if (typeof index !== "number") {
+    throw new Error("Letter dropped on worng position with no index?!?!?!");
+  }
+
   const newWrongLetters = [...wrongLetters];
   newWrongLetters[index] = Array.from(
     new Set([...newWrongLetters[index], letter])
@@ -41,15 +56,21 @@ const addToWrongPosition = (
   return newWrongLetters;
 };
 
-const addToUnused = ({ unusedLetters }, { payload: { letter } }) => {
+const addToUnused = (
+  { unusedLetters }: AppState,
+  { payload: { letter } }: LetterDroppedAction
+) => {
   const newUnusedLetters = [...unusedLetters, letter];
   newUnusedLetters.sort();
 
   return newUnusedLetters;
 };
 
-const removeFromAvailable = ({ availableLetters }, { payload: { letter } }) => {
-  return availableLetters.filter((l) => l !== letter);
+const removeFromAvailable = (
+  { availableLetters }: AppState,
+  { payload: { letter } }: LetterDroppedAction
+) => {
+  return availableLetters.filter(l => l !== letter);
 };
 
 // const removeFromUnused = ({ unusedLetters }, { payload: { letter } }) => {
@@ -62,27 +83,33 @@ const updateWords = ({
   unusedLetters,
   wrongLetters,
   wrongLetterSet,
-}) => {
+}: AppState) => {
   const unusedRe = new RegExp(`[${unusedLetters}]`);
   const correctRe = new RegExp(
-    correctLetters.reduce((str, letter) => str + (letter || "."), "")
+    correctLetters.reduce(
+      (str: string, letter: LetterOrEmpty) => str + (letter || "."),
+      ""
+    )
   );
 
-  const wrongRes = wrongLetters.reduce((res, letters, index) => {
-    if (letters.length === 0) {
-      return res;
-    }
+  const wrongRes: RegExp[] = wrongLetters.reduce(
+    (res: RegExp[], letters: Letter[], index: number) => {
+      if (letters.length === 0) {
+        return res;
+      }
 
-    const baseReArr = [".", ".", ".", ".", "."];
-    const newRes = letters.map((letter) => {
-      const reArr = [...baseReArr];
-      reArr[index] = letter;
+      const baseReArr = [".", ".", ".", ".", "."];
+      const newRes = letters.map(letter => {
+        const reArr = [...baseReArr];
+        reArr[index] = letter;
 
-      return new RegExp(reArr.join(""));
-    });
+        return new RegExp(reArr.join(""));
+      });
 
-    return [...res, ...newRes];
-  }, []);
+      return [...res, ...newRes];
+    },
+    []
+  );
 
   const containsAllWrongLettersRe = new RegExp(
     `${Array.from(wrongLetterSet).reduce(
@@ -91,7 +118,7 @@ const updateWords = ({
     )}.+`
   );
 
-  const fewerWords = remainingWords.filter((word) => {
+  const fewerWords = remainingWords.filter(word => {
     const matchesUnused = !!word.match(unusedRe);
     if (matchesUnused) {
       return false;
@@ -118,12 +145,12 @@ const updateWords = ({
   return fewerWords;
 };
 
-export const reducer = (state, action) => {
+export const reducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
-    case c.LETTER_DROPPED:
+    case "LETTER_DROPPED":
       if (
-        action.payload.fromType === LetterPoolTypes.AVAILABLE &&
-        action.payload.toType === LetterPoolTypes.NOT_USED
+        action.payload.fromType === "available" &&
+        action.payload.toType === "not-used"
       ) {
         return {
           ...state,
@@ -131,8 +158,8 @@ export const reducer = (state, action) => {
           unusedLetters: addToUnused(state, action),
         };
       } else if (
-        action.payload.fromType === LetterPoolTypes.NOT_USED &&
-        action.payload.toType === LetterPoolTypes.AVAILABLE
+        action.payload.fromType === "not-used" &&
+        action.payload.toType === "available"
       ) {
         return state;
         // return {
@@ -141,16 +168,16 @@ export const reducer = (state, action) => {
         //   unusedLetters: removeFromUnused(state, action),
         // };
       } else if (
-        action.payload.fromType === LetterPoolTypes.AVAILABLE &&
-        action.payload.toType === LetterPoolTypes.CORRECT_POSITION
+        action.payload.fromType === "available" &&
+        action.payload.toType === "correct-position"
       ) {
         return {
           ...state,
           correctLetters: addToCorrectPosition(state, action),
         };
       } else if (
-        action.payload.fromType === LetterPoolTypes.AVAILABLE &&
-        action.payload.toType === LetterPoolTypes.WRONG_PLACE
+        action.payload.fromType === "available" &&
+        action.payload.toType === "wrong-place"
       ) {
         return {
           ...state,
@@ -160,15 +187,15 @@ export const reducer = (state, action) => {
       }
 
       return state;
-    case c.LETTER_SELECTED:
+    case "LETTER_SELECTED":
       return {
         ...state,
         selectedLetter: action.payload,
       };
-    case c.UPDATE_SUGGESTED_WORDS:
+    case "UPDATE_SUGGESTED_WORDS":
       return {
         ...state,
-        remainingWords: updateWords(state, action),
+        remainingWords: updateWords(state),
       };
     default:
       return state;

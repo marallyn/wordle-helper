@@ -1,18 +1,18 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import CorrectPositionPool from "../components/CorrectPositionPool";
 import KeyboardShortcutsModal from "../components/KeyboardShortcutsModal";
 import LetterPool from "../components/LetterPool";
 import WordList from "../components/WordList";
 import WrongPositionPool from "../components/WrongPositionPool";
-import { LetterPoolTypes } from "../constants/appConstants";
-import c from "../context/constants";
 import { DispatchContext, StateContext } from "../context/contexts";
 import { initialState } from "../context/reducer";
 
 import "./WordleHelper.css";
+import { LetterDroppedPayload } from "../types/actions";
+import useWordUpdater from "../hooks/useWordUpdater";
 
-function WordleHelper() {
+export default function WordleHelper() {
   const [shorcutsModalOpen, setShorcutsModalOpen] = useState(false);
   const {
     availableLetters,
@@ -21,12 +21,13 @@ function WordleHelper() {
     unusedLetters,
     wrongLetters,
   } = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
-  const initialMount = useRef(true);
+  const { dispatch } = useContext(DispatchContext);
+
+  useWordUpdater();
 
   const handleLetterDropped = useCallback(
-    letterEvent => {
-      dispatch({ type: c.LETTER_DROPPED, payload: letterEvent });
+    (letterEvent: LetterDroppedPayload) => {
+      dispatch({ type: "LETTER_DROPPED", payload: letterEvent });
     },
     [dispatch]
   );
@@ -36,21 +37,7 @@ function WordleHelper() {
   };
 
   useEffect(() => {
-    if (initialMount.current) {
-      initialMount.current = false;
-
-      return;
-    }
-
-    dispatch({ type: c.UPDATE_SUGGESTED_WORDS, payload: null });
-  }, [dispatch, correctLetters, unusedLetters, wrongLetters]);
-
-  useEffect(() => {
-    dispatch({ type: c.INITIALIZED, payload: true });
-  }, [dispatch]);
-
-  useEffect(() => {
-    const handleGlobalKeyDown = event => {
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
       const wrongCommands = "!@#$%";
       const letterCommandKeys = `12345!@#$%ua`.split("");
       const otherCommandKeys = ["?", "Shift", "Escape"];
@@ -62,13 +49,13 @@ function WordleHelper() {
       const pressedKey = event.key;
 
       if (!handledKeys.includes(pressedKey)) {
-        dispatch({ type: c.LETTER_SELECTED, payload: null });
+        dispatch({ type: "LETTER_SELECTED", payload: null });
 
         return;
       }
 
       if (!selectedLetter && availableLetters.includes(pressedKey)) {
-        dispatch({ type: c.LETTER_SELECTED, payload: pressedKey });
+        dispatch({ type: "LETTER_SELECTED", payload: pressedKey });
 
         return;
       }
@@ -92,15 +79,15 @@ function WordleHelper() {
           case "u":
             handleLetterDropped({
               letter: selectedLetter,
-              fromType: LetterPoolTypes.AVAILABLE,
-              toType: LetterPoolTypes.NOT_USED,
+              fromType: "available",
+              toType: "not-used",
             });
             break;
           case "a":
             handleLetterDropped({
               letter: selectedLetter,
-              fromType: LetterPoolTypes.NOT_USED,
-              toType: LetterPoolTypes.AVAILABLE,
+              fromType: "not-used",
+              toType: "available",
             });
             break;
           case "1":
@@ -111,8 +98,8 @@ function WordleHelper() {
             handleLetterDropped({
               letter: selectedLetter,
               index: +pressedKey - 1,
-              fromType: LetterPoolTypes.AVAILABLE,
-              toType: LetterPoolTypes.CORRECT_POSITION,
+              fromType: "available",
+              toType: "correct-position",
             });
             break;
           case "!":
@@ -123,13 +110,13 @@ function WordleHelper() {
             handleLetterDropped({
               letter: selectedLetter,
               index: wrongCommands.indexOf(pressedKey),
-              fromType: LetterPoolTypes.AVAILABLE,
-              toType: LetterPoolTypes.WRONG_PLACE,
+              fromType: "available",
+              toType: "wrong-place",
             });
             break;
         }
       }
-      dispatch({ type: c.LETTER_SELECTED, payload: null });
+      dispatch({ type: "LETTER_SELECTED", payload: null });
     };
 
     // Add the event listener when the component mounts
@@ -153,7 +140,7 @@ function WordleHelper() {
             onDropLetter={handleLetterDropped}
             selectedLetter={selectedLetter}
             title="Available Letters"
-            type={LetterPoolTypes.AVAILABLE}
+            type={"available"}
           />
         </div>
         <div className="flex flex-col justify-start">
@@ -162,7 +149,7 @@ function WordleHelper() {
             onDropLetter={handleLetterDropped}
             selectedLetter={selectedLetter}
             title="Unused Letters"
-            type={LetterPoolTypes.NOT_USED}
+            type={"not-used"}
           />
           <WordList />
         </div>
@@ -174,5 +161,3 @@ function WordleHelper() {
     </>
   );
 }
-
-export default WordleHelper;

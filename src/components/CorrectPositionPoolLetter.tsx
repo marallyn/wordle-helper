@@ -1,17 +1,29 @@
 import { useDrop } from "react-dnd";
-import { ItemTypes, LetterPoolTypes } from "../constants/appConstants";
+import { DnDTypes } from "../types/drag-n-drop";
+import { LetterOrEmpty } from "../types/common";
+import { LetterDroppedPayload } from "../types/actions";
 
-const CorrectPositionLetter = ({ index, letter, onLetterDropped }) => {
+interface CorrectPositionLetterProps {
+  index: number;
+  letter: LetterOrEmpty;
+  onLetterDropped: (letterEvent: LetterDroppedPayload) => void;
+}
+
+const CorrectPositionLetter: React.FC<CorrectPositionLetterProps> = ({
+  index,
+  letter,
+  onLetterDropped,
+}) => {
   const [_, drop] = useDrop(() => ({
-    accept: ItemTypes.LETTER,
-    drop: (item) =>
+    accept: DnDTypes.LETTER,
+    drop: item =>
       onLetterDropped({
         letter: item.letter,
         fromType: item.type,
-        toType: LetterPoolTypes.CORRECT_POSITION,
+        toType: "correct-position",
         index,
       }),
-    collect: (monitor) => ({ isOver: monitor.isOver() }),
+    collect: monitor => ({ isOver: monitor.isOver() }),
   }));
 
   return (
