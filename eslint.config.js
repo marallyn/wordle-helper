@@ -1,29 +1,44 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
 
-export default defineConfig([
-  globalIgnores(['dist']),
+export default tseslint.config(
+  eslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
   {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        allowDefaultProject: true,
       },
     },
-    rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-    },
   },
-])
+)
+// You might want to add other configs for React, React Hooks, Prettier etc. here
+// For example, if you want your original React/React-Hooks configs back:
+// {
+//   files: ['**/*.{js,jsx,ts,tsx}'], // Apply to all relevant code files
+//   plugins: {
+//     'react-hooks': reactHooksPlugin, // Make sure to import these plugins
+//     'react-refresh': reactRefreshPlugin,
+//   },
+//   rules: {
+//     // Standard React rules (if not in extended configs)
+//     'react/react-in-jsx-scope': 'off', // For React 17+ JSX transform
+//     // React Hooks rules
+//     'react-hooks/rules-of-hooks': 'error',
+//     'react-hooks/exhaustive-deps': 'warn',
+//     // React Refresh rules
+//     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+//   },
+//   settings: {
+//     react: {
+//       version: 'detect',
+//     },
+//   },
+// },
+// Prettier integration (if you choose to use it)
+// {
+//   extends: ['eslint-config-prettier'], // or similar structure if using a plugin
+// }
+// )

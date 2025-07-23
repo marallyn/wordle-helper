@@ -1,19 +1,20 @@
-import CorrectPositionLetter from "./CorrectPositionPoolLetter";
-import { LetterDroppedPayload } from "../types/actions";
-import { LetterOrEmpty } from "../types/common";
-import useDispatch from "../hooks/useDispatch";
+import useDispatch from "../hooks/useDispatch"
+import { LetterDroppedPayload } from "../types/actions"
+import { LetterOrEmpty } from "../types/common"
+import CorrectPositionLetter from "./CorrectPositionPoolLetter"
 
 interface CorrectPositionPoolProps {
-  letters: LetterOrEmpty[];
+  letters: LetterOrEmpty[]
 }
 
-const CorrectPositionPool: React.FC<CorrectPositionPoolProps> = ({
-  letters,
-}) => {
-  const dispatch = useDispatch();
-  const handleLetterDropped = (letterEvent: LetterDroppedPayload) => {
-    dispatch({ type: "LETTER_DROPPED", payload: letterEvent });
-  };
+const CorrectPositionPool = ({ letters }: CorrectPositionPoolProps) => {
+  const dispatch = useDispatch()
+  const handleLetterDropped = (payload: LetterDroppedPayload) => {
+    dispatch({
+      type: "LETTER_DROPPED_ON_CORRECT_POSITION",
+      payload,
+    })
+  }
 
   return (
     <div className="border-2 border-dashed p-4 min-h-[150px] rounded-lg mb-2 border-gray-300 bg-gray-100">
@@ -34,7 +35,7 @@ const CorrectPositionPool: React.FC<CorrectPositionPoolProps> = ({
         (Drop a letter on one of the slots to mark its correct position.)
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default CorrectPositionPool;
+export default CorrectPositionPool

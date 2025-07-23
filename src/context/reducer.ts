@@ -107,7 +107,7 @@ const updateWords = ({
   wrongLetters,
   wrongLetterSet,
 }: AppState): Word[] => {
-  const unusedRe = new RegExp(`[${unusedLetters}]`)
+  const unusedRe = new RegExp(`[${unusedLetters.join("")}]`)
   const correctRe = new RegExp(
     correctLetters.reduce(
       (str: string, letter: LetterOrEmpty) => str + (letter || "."),

@@ -1,30 +1,27 @@
-import { useDrop } from "react-dnd";
-import LetterBox from "./LetterBox";
-import { Letter, LetterPoolTypes } from "../types/common";
-import { DnDTypes } from "../types/drag-n-drop";
-import { LetterDroppedPayload } from "../types/actions";
+import LetterBox from "./LetterBox"
+import { Letter, LetterPoolTypes } from "../types/common"
+import { LetterDroppedPayload } from "../types/actions"
+import useDropLetter from "../hooks/useDropLetter"
 
 interface LetterPoolProps {
-  letters: Letter[];
-  onDropLetter: (payload: LetterDroppedPayload) => void;
-  selectedLetter: Letter | null;
-  title: string;
-  type: LetterPoolTypes;
+  letters: Letter[]
+  onLetterDropped: (payload: LetterDroppedPayload) => void
+  selectedLetter: Letter | null
+  title: string
+  type: LetterPoolTypes
 }
 
-const LetterPool: React.FC<LetterPoolProps> = ({
+export default function LetterPool({
   letters,
-  onDropLetter,
+  onLetterDropped,
   selectedLetter,
   title,
   type,
-}) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: DnDTypes.LETTER,
-    drop: item =>
-      onDropLetter({ letter: item.letter, fromType: item.type, toType: type }),
-    collect: monitor => ({ isOver: monitor.isOver() }),
-  }));
+}: LetterPoolProps) {
+  const { drop, isOver } = useDropLetter({
+    toType: type,
+    onLetterDropped,
+  })
 
   return (
     <div
@@ -48,7 +45,5 @@ const LetterPool: React.FC<LetterPoolProps> = ({
         />
       ))}
     </div>
-  );
-};
-
-export default LetterPool;
+  )
+}

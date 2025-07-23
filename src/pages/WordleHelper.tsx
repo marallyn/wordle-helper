@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import CorrectPositionPool from "../components/CorrectPositionPool"
 import KeyboardShortcutsModal from "../components/KeyboardShortcutsModal"
 import LetterPool from "../components/LetterPool"
@@ -40,17 +40,9 @@ export default function WordleHelper() {
             payload: letterEvent,
           })
           break
+        // these cases will not happen
         case "correct-position":
-          dispatch({
-            type: "LETTER_DROPPED_ON_CORRECT_POSITION",
-            payload: letterEvent,
-          })
-          break
         case "wrong-place":
-          dispatch({
-            type: "LETTER_DROPPED_ON_WRONG_POSITION",
-            payload: letterEvent,
-          })
           break
       }
     },
@@ -70,7 +62,7 @@ export default function WordleHelper() {
           <WrongPositionPool letters={wrongLetters} />
           <LetterPool
             letters={availableLetters}
-            onDropLetter={handleLetterDropped}
+            onLetterDropped={handleLetterDropped}
             selectedLetter={selectedLetter}
             title="Available Letters"
             type={"available"}
@@ -79,7 +71,7 @@ export default function WordleHelper() {
         <div className="flex flex-col justify-start">
           <LetterPool
             letters={unusedLetters}
-            onDropLetter={handleLetterDropped}
+            onLetterDropped={handleLetterDropped}
             selectedLetter={selectedLetter}
             title="Unused Letters"
             type={"not-used"}

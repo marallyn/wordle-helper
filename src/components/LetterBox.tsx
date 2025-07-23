@@ -1,35 +1,40 @@
-import { useDrag } from "react-dnd";
-import { Letter, LetterPoolTypes } from "../types/common";
-import { DnDTypes } from "../types/drag-n-drop";
+import { useDrag, DragSourceMonitor, ConnectDragSource } from "react-dnd"
+import { Letter, LetterPoolTypes } from "../types/common"
+import { DnDTypes, DragCollectedProps, LetterItem } from "../types/drag-n-drop"
 
 const typeClasses = (type: LetterPoolTypes) => {
   switch (type) {
     case "available":
-      return "bg-blue-500 hover:bg-blue-600 text-white";
+      return "bg-blue-500 hover:bg-blue-600 text-white"
     case "correct-position":
-      return "bg-green-500 text-white";
+      return "bg-green-500 text-white"
     case "wrong-place":
-      return "bg-yellow-500 text-black";
+      return "bg-yellow-500 text-black"
     case "not-used":
-      return "bg-gray-400 text-white";
+      return "bg-gray-400 text-white"
   }
-};
+}
 
 interface LetterProps {
-  letter: Letter;
-  selectedLetter: Letter | null;
-  type: LetterPoolTypes;
+  letter: Letter
+  selectedLetter: Letter | null
+  type: LetterPoolTypes
 }
 
 const LetterBox = ({ letter, selectedLetter, type }: LetterProps) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: DnDTypes.LETTER,
-    item: { letter, type },
-    collect: monitor => ({ isDragging: monitor.isDragging() }),
-  }));
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const [{ isDragging }, drag]: [DragCollectedProps, ConnectDragSource] =
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    useDrag<LetterItem, unknown, DragCollectedProps>(() => ({
+      type: DnDTypes.LETTER,
+      item: { letter, type },
+      collect: (monitor: DragSourceMonitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }))
 
   const classes =
-    letter === selectedLetter ? "bg-red-400 text-white" : typeClasses(type);
+    letter === selectedLetter ? "bg-red-400 text-white" : typeClasses(type)
 
   return (
     <div
@@ -44,7 +49,7 @@ const LetterBox = ({ letter, selectedLetter, type }: LetterProps) => {
     >
       {letter}
     </div>
-  );
-};
+  )
+}
 
-export default LetterBox;
+export default LetterBox

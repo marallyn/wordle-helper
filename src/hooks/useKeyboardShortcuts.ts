@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useEffect } from "react"
 import useAppState from "./useAppState"
 import useDispatch from "./useDispatch"
 import { Letter, LetterPoolTypes } from "../types/common"
@@ -11,24 +11,11 @@ const moveLetterCommands = ["u", "a"]
 const otherCommands = ["?", "Shift", "Escape"]
 
 export default function useKeyboardShortcuts() {
-  const {
-    availableLetters,
-    correctLetters,
-    remainingWords,
-    selectedLetter,
-    unusedLetters,
-    wrongLetters,
-    wrongLetterSet,
-  } = useAppState()
+  const { availableLetters, selectedLetter } = useAppState()
   const dispatch = useDispatch()
 
   const handleCorrectLetterDropped = useCallback(
     (payload: LetterDroppedPayload) => {
-      // console.log(
-      //   "letter dropped on correct position",
-      //   payload.letter,
-      //   payload.index
-      // );
       dispatch({ type: "LETTER_DROPPED_ON_CORRECT_POSITION", payload })
     },
     [dispatch],
@@ -36,11 +23,6 @@ export default function useKeyboardShortcuts() {
 
   const handleWrongLetterDropped = useCallback(
     (payload: LetterDroppedPayload) => {
-      // console.log(
-      //   "letter dropped on wrong position",
-      //   payload.letter,
-      //   payload.index
-      // );
       dispatch({ type: "LETTER_DROPPED_ON_WRONG_POSITION", payload })
     },
     [dispatch],
@@ -52,7 +34,6 @@ export default function useKeyboardShortcuts() {
         payload.toType === "available"
           ? { type: "LETTER_DROPPED_ON_AVAILABLE", payload }
           : { type: "LETTER_DROPPED_ON_UNAVAILABLE", payload }
-      // console.log("letter moved", action);
       dispatch(action)
     },
     [dispatch],
@@ -60,7 +41,6 @@ export default function useKeyboardShortcuts() {
 
   const handleLetterSelected = useCallback(
     (letter: Letter | null) => {
-      // console.log("letter selected", letter);
       dispatch({ type: "LETTER_SELECTED", payload: letter })
     },
     [dispatch],
@@ -68,7 +48,6 @@ export default function useKeyboardShortcuts() {
 
   const handleToggleShortcutModal = useCallback(
     (toggle: boolean) => {
-      // console.log("toggle shortcut modal", toggle)
       dispatch({ type: "TOGGLE_SHORTCUT_MODAL", payload: toggle })
     },
     [dispatch],
@@ -85,7 +64,6 @@ export default function useKeyboardShortcuts() {
       const isOtherCommand = otherCommands.includes(pressedKey)
       const isLetter = allAvailableLetters.includes(pressedKey as Letter)
       const isAvailableLetter = availableLetters.includes(pressedKey as Letter)
-      const isUnavailableLetter = unusedLetters.includes(pressedKey as Letter)
 
       if (selectedLetter && isCorrectPositionCommand) {
         const index = +pressedKey - 1

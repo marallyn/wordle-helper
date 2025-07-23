@@ -1,30 +1,23 @@
-import { useDrop } from "react-dnd";
-import { DnDTypes } from "../types/drag-n-drop";
-import { Letter } from "../types/common";
-import { LetterDroppedPayload } from "../types/actions";
+import { Letter } from "../types/common"
+import { LetterDroppedPayload } from "../types/actions"
+import useDropLetter from "../hooks/useDropLetter"
 
 interface WrongPositionLetterProps {
-  index: number;
-  letters: Letter[];
-  onLetterDropped: (letterEvent: LetterDroppedPayload) => void;
+  index: number
+  letters: Letter[]
+  onLetterDropped: (payload: LetterDroppedPayload) => void
 }
 
-const WrongPositionLetter: React.FC<WrongPositionLetterProps> = ({
+const WrongPositionLetter = ({
   index,
   letters,
   onLetterDropped,
-}) => {
-  const [_, drop] = useDrop(() => ({
-    accept: DnDTypes.LETTER,
-    drop: item =>
-      onLetterDropped({
-        letter: item.letter,
-        fromType: item.type,
-        toType: "wrong-place",
-        index,
-      }),
-    collect: monitor => ({ isOver: monitor.isOver() }),
-  }));
+}: WrongPositionLetterProps) => {
+  const { drop } = useDropLetter({
+    index,
+    toType: "wrong-place",
+    onLetterDropped,
+  })
 
   return (
     <div
@@ -41,7 +34,7 @@ const WrongPositionLetter: React.FC<WrongPositionLetterProps> = ({
     >
       {letters.join(",") || index + 1}
     </div>
-  );
-};
+  )
+}
 
-export default WrongPositionLetter;
+export default WrongPositionLetter
