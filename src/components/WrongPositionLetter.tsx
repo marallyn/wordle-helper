@@ -24,7 +24,7 @@ const WrongPositionLetter = ({
       ref={drop}
       key={`correct-position-${index}`}
       className={`
-        min-w-16 h-16 flex items-center justify-center border-2 rounded text-3xl font-bold
+        min-w-12 h-12 flex items-center justify-center border-2 rounded text-3xl font-bold
         ${
           letters.length > 0
             ? "bg-yellow-300 text-white border-yellow-400"

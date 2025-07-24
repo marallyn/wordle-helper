@@ -17,7 +17,6 @@ export const initialState: AppState = {
   shortcutsModalOpen: false,
   unusedLetters: [],
   wrongLetters: [[], [], [], [], []],
-  wrongLetterSet: new Set(),
 }
 
 const addToAvailable = (
@@ -101,12 +100,93 @@ const removeFromCorrect = (
   ) as LetterOrEmptyArray
 }
 
+const removeFromOneCorrectPosition = (
+  { correctLetters }: AppState,
+  { payload: { index, letter } }: LetterDroppedAction,
+): LetterOrEmptyArray => {
+  if (typeof index !== "number") {
+    throw new Error("Letter dropped on worng position with no index?!?!?!")
+  }
+
+  if (correctLetters[index] !== letter) {
+    return correctLetters
+  }
+
+  const newCorrectLetters: LetterOrEmptyArray = [...correctLetters]
+  newCorrectLetters[index] = ""
+
+  return newCorrectLetters
+}
+
+const removeFromWrongPositionAtIndex = (
+  wrongLetters: Letter[][],
+  index: number,
+  letter: Letter,
+): Letter[][] => {
+  const wrongLettersOfIndex: Letter[] = wrongLetters[index]
+
+  if (!wrongLettersOfIndex.includes(letter)) {
+    return wrongLetters
+  }
+
+  const newWrongLetters: Letter[][] = [...wrongLetters]
+  newWrongLetters[index] = wrongLettersOfIndex.filter(
+    (wrongLetter: Letter) => wrongLetter !== letter,
+  )
+
+  return newWrongLetters
+}
+
+const removeFromOneWrongPosition = (
+  { wrongLetters }: AppState,
+  { payload: { index, letter } }: LetterDroppedAction,
+): Letter[][] => {
+  if (typeof index !== "number") {
+    throw new Error("Letter dropped on worng position with no index?!?!?!")
+  }
+
+  return removeFromWrongPositionAtIndex(wrongLetters, index, letter)
+}
+
+const removeFromAllWrongPositions = (
+  { wrongLetters }: AppState,
+  { payload: { letter } }: LetterDroppedAction,
+): Letter[][] => {
+  let newWrongLetters: Letter[][] = [...wrongLetters]
+  let index: number
+
+  for (index = 0; index < 5; index++) {
+    newWrongLetters = removeFromWrongPositionAtIndex(
+      newWrongLetters,
+      index,
+      letter,
+    )
+  }
+
+  return newWrongLetters
+}
+
+const wrongLetterSetFromWrongLetters = (
+  wrongLetters: Letter[][],
+): Set<Letter> => {
+  const wrongLetterSet: Set<Letter> = new Set()
+
+  wrongLetters.forEach((wrongLetters: Letter[]) => {
+    wrongLetters.forEach((wrongLetter: Letter) =>
+      wrongLetterSet.add(wrongLetter),
+    )
+  })
+
+  return wrongLetterSet
+}
+
 const updateWords = ({
   correctLetters,
   unusedLetters,
   wrongLetters,
-  wrongLetterSet,
 }: AppState): Word[] => {
+  const wrongLetterSet: Set<Letter> =
+    wrongLetterSetFromWrongLetters(wrongLetters)
   const unusedRe = new RegExp(`[${unusedLetters.join("")}]`)
   const correctRe = new RegExp(
     correctLetters.reduce(
@@ -171,19 +251,18 @@ const updateWords = ({
 export const reducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
     case "LETTER_DROPPED_ON_CORRECT_POSITION":
-      // TODO remove from the corresponding wrong position
       return {
         ...state,
         availableLetters: addToAvailable(state, action),
         unusedLetters: removeFromUnused(state, action),
         correctLetters: addToCorrectPosition(state, action),
+        wrongLetters: removeFromOneWrongPosition(state, action),
       }
     case "LETTER_DROPPED_ON_WRONG_POSITION":
       return {
         ...state,
         wrongLetters: addToWrongPosition(state, action),
-        wrongLetterSet: state.wrongLetterSet.add(action.payload.letter),
-        correctLetters: removeFromCorrect(state, action),
+        correctLetters: removeFromOneCorrectPosition(state, action),
         availableLetters: addToAvailable(state, action),
         unusedLetters: removeFromUnused(state, action),
       }
@@ -194,12 +273,12 @@ export const reducer = (state: AppState, action: Action): AppState => {
         unusedLetters: removeFromUnused(state, action),
       }
     case "LETTER_DROPPED_ON_UNAVAILABLE":
-      // TODO remove from wrong
       return {
         ...state,
         availableLetters: removeFromAvailable(state, action),
         unusedLetters: addToUnused(state, action),
         correctLetters: removeFromCorrect(state, action),
+        wrongLetters: removeFromAllWrongPositions(state, action),
       }
     case "LETTER_SELECTED":
       return {

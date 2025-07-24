@@ -9,7 +9,6 @@ export interface AppState {
   shortcutsModalOpen: boolean
   unusedLetters: Letter[]
   wrongLetters: Letter[][]
-  wrongLetterSet: Set<Letter>
 }
 
 export interface DispatchState {

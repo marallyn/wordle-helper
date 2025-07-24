@@ -24,7 +24,7 @@ const CorrectPositionLetter = ({
       ref={drop}
       key={`correct-position-${index}`}
       className={`
-        w-16 h-16 flex items-center justify-center border-2 rounded text-3xl font-bold
+        w-12 h-12 flex items-center justify-center border-2 rounded text-3xl font-bold
         ${
           letter
             ? "bg-green-500 text-white border-green-600"

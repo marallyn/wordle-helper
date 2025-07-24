@@ -40,7 +40,7 @@ const LetterBox = ({ letter, selectedLetter, type }: LetterProps) => {
     <div
       ref={drag}
       className={`
-        p-4 m-1 rounded-lg text-2xl font-bold w-16
+        p-1 m-1 rounded-lg text-2xl font-bold w-10 h-10
         ${classes}
         ${isDragging ? "opacity-50" : "opacity-100"}
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400
