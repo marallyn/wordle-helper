@@ -66,13 +66,21 @@ const KeyboardShortcutsModal = ({
           <h2 className="text-3xl font-bold text-gray-800">
             Keyboard Shortcuts
           </h2>
-          <button
+          <span
+            role="button"
+            tabIndex={0}
             onClick={() => onClose()}
-            className="text-gray-500 hover:text-gray-700 text-3xl font-bold transition-colors duration-200"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClose();
+              }
+            }}
+            className="text-gray-500 hover:text-gray-700 text-3xl font-bold cursor-pointer transition-colors duration-200 focus:outline-none select-none"
             aria-label="Close"
           >
             &times;
-          </button>
+          </span>
         </div>
 
         <div className="text-gray-700 text-lg">
