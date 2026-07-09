@@ -7,7 +7,7 @@ import { LetterDroppedAction, LetterDroppedPayload } from "../types/actions"
 
 const correctPositionCommands = ["1", "2", "3", "4", "5"]
 const wrongPositionCommands = ["!", "@", "#", "$", "%"]
-const moveLetterCommands = ["u", "a"]
+const moveLetterCommands = ["u", "a", "r"]
 const otherCommands = ["?", "Shift", "Escape"]
 
 export default function useKeyboardShortcuts() {

@@ -6,7 +6,9 @@ interface HowToPlayModalProps {
 }
 
 const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
-  const [doNotShowAgain, setDoNotShowAgain] = useState(false)
+  const [doNotShowAgain, setDoNotShowAgain] = useState(() => {
+    return localStorage.getItem("hideHowToPlayModal") === "true"
+  })
 
   // Effect to handle saving the preference to localStorage when the checkbox changes
   useEffect(() => {

@@ -36,6 +36,11 @@ const shortcutEntries: ShortcutEntryProps[] = [
     colorClasses: "bg-purple-200 text-purple-800",
     description: "adds letter to position 1-5 in the wrong letter pool",
   },
+  {
+    keys: "r",
+    colorClasses: "bg-purple-200 text-purple-800",
+    description: "reset selected letter",
+  },
 ]
 
 interface KeyboardShortcutsModalProps {
