@@ -29,12 +29,12 @@ const shortcutEntries: ShortcutEntryProps[] = [
   {
     keys: "1, 2, 3, 4, 5",
     colorClasses: "bg-purple-200 text-purple-800",
-    description: "adds letter to position 1-5 in the ,correct letter pool",
+    description: "adds letter to position 1-5 in the correct letter pool",
   },
   {
     keys: "shift + 1, 2, 3, 4, 5",
     colorClasses: "bg-purple-200 text-purple-800",
-    description: "adds letter to position 1-5 in the ,wrong letter pool",
+    description: "adds letter to position 1-5 in the wrong letter pool",
   },
 ]
 

@@ -274,6 +274,8 @@ export const reducer = (state: AppState, action: Action): AppState => {
         ...state,
         availableLetters: addToAvailable(state, action),
         unusedLetters: removeFromUnused(state, action),
+        correctLetters: removeFromCorrect(state, action),
+        wrongLetters: removeFromAllWrongPositions(state, action),
       }
     case "LETTER_DROPPED_ON_UNAVAILABLE":
       return {
