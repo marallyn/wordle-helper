@@ -12,7 +12,7 @@ import { availableLetters as allAvailableLetters } from "../utils/utils"
 export const initialState: AppState = {
   availableLetters: allAvailableLetters,
   correctLetters: ["", "", "", "", ""],
-  remainingWords: allPossibleWords.sort(),
+  remainingWords: allPossibleWords.map(w => w.word),
   selectedLetter: null,
   shortcutsModalOpen: false,
   unusedLetters: [],
@@ -221,29 +221,32 @@ const updateWords = ({
     )}.+`,
   )
 
-  const fewerWords: Word[] = allPossibleWords.filter(word => {
-    const matchesUnused = !!word.match(unusedRe)
-    if (matchesUnused) {
-      return false
-    }
+  const fewerWords: Word[] = allPossibleWords
+    .filter(item => {
+      const word = item.word
+      const matchesUnused = !!word.match(unusedRe)
+      if (matchesUnused) {
+        return false
+      }
 
-    const doesNotMatchWrong = wrongRes.reduce((soWrong, wrongRe) => {
-      const letterInWrongPlace = !!word.match(wrongRe)
+      const doesNotMatchWrong = wrongRes.reduce((soWrong, wrongRe) => {
+        const letterInWrongPlace = !!word.match(wrongRe)
 
-      return soWrong && !letterInWrongPlace
-    }, true)
+        return soWrong && !letterInWrongPlace
+      }, true)
 
-    if (!doesNotMatchWrong) {
-      return false
-    }
+      if (!doesNotMatchWrong) {
+        return false
+      }
 
-    const containsAllWrongLetters = !!word.match(containsAllWrongLettersRe)
-    if (wrongLetterSet.size > 0 && !containsAllWrongLetters) {
-      return false
-    }
+      const containsAllWrongLetters = !!word.match(containsAllWrongLettersRe)
+      if (wrongLetterSet.size > 0 && !containsAllWrongLetters) {
+        return false
+      }
 
-    return !!word.match(correctRe)
-  })
+      return !!word.match(correctRe)
+    })
+    .map(item => item.word)
 
   return fewerWords
 }

@@ -44,21 +44,18 @@ Wordle Helper is a React 19 single-page web application that helps users solve W
 
 ## Deployment
 
-This project is configured to deploy to **Cloudflare Pages** using the configuration in [wrangler.jsonc](file:///Users/jeffmartin/personal/wordle-helper/wrangler.jsonc).
+### 1. Automated CI/CD (Active)
+This project is configured with a GitHub Actions workflow in [.github/workflows/deploy.yml](file:///Users/jeffmartin/personal/wordle-helper/.github/workflows/deploy.yml).
+- **Trigger**: Every push to the `main` branch.
+- **Actions**:
+  - Sets up Node.js v24 (matching [.nvmrc](file:///Users/jeffmartin/personal/wordle-helper/.nvmrc)).
+  - Runs `npm run lint` and `npm run build`.
+  - Authenticates with Google Cloud and uploads the production build `./dist` folder to a Google Cloud Storage bucket.
+- **Auto-deployment**: Yes! Simply pushing your changes to the remote `main` branch will automatically build and deploy the application.
 
-### 1. Automated CI/CD (Recommended)
-The easiest way to deploy is to connect the GitHub repository to the Cloudflare dashboard:
-1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com).
-2. Go to **Workers & Pages** > **Create application** > **Pages** > **Connect to Git**.
-3. Select this repository and use the following build settings:
-   - **Framework preset**: `Vite`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-   - **Node.js Version**: `24` (defined in [nvmrc](file:///Users/jeffmartin/personal/wordle-helper/.nvmrc))
-
-### 2. Manual CLI Deployment
-You can manually deploy the production build directly from your command line:
-1. Authenticate with your Cloudflare account (one-time setup):
+### 2. Alternative Manual Deployment (Cloudflare Pages)
+A [wrangler.jsonc](file:///Users/jeffmartin/personal/wordle-helper/wrangler.jsonc) config file is present in the repository, allowing manual deployments to Cloudflare Pages:
+1. Authenticate with Wrangler:
    ```bash
    npx wrangler login
    ```
@@ -78,6 +75,7 @@ You can manually deploy the production build directly from your command line:
 ### 1. Types & Strict Mode
 - Always use the types defined in `src/types/`. Avoid declaring local types for standard entities.
 - For example, represent Wordle guess states using `Letter` (`"a" | "b" | ...`), `LetterOrEmptyArray` (for five-letter slots), or `Word`.
+- **Ranked Words**: Words list in [words.ts](file:///Users/jeffmartin/personal/wordle-helper/src/data/words.ts) is typed as `RankedWord[]` containing a `word: string`, `score: number` (positional letter frequency + solution status), and `isSolution: boolean`. The array literal is cast to `any` at the end to prevent compiler union-type complexity issues (error `TS2590`).
 - Standard ESLint config (`typescript-eslint`) uses `projectService: true` for full type checking during linting.
 
 ### 2. State Mutation
